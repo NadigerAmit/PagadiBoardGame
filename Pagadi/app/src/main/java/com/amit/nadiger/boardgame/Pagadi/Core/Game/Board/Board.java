@@ -71,6 +71,10 @@ public class Board {
             Object key = entry.getKey();
             Cell value = (Cell) entry.getValue();
             System.out.println("Key ="+key+" Value = "+value.getCellType());
+            if(value instanceof RestingCell) {
+                ((RestingCell) value).debugPrintResidents();
+                ((RestingCell) value).debugImmegrants();
+            }
         }
     }
 }

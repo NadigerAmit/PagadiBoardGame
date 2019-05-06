@@ -21,6 +21,10 @@ abstract public class Pawn {
         return mHomeCellNo;
     }
 
+    public int getHomeCell() {
+        return mHomeCellNo;
+    }
+
     public int getCurrentPosition() {
         return mCurrentPosition;
     }
@@ -35,4 +39,11 @@ abstract public class Pawn {
 
 
     public int getPawnId() { return mPawnId; }
+
+    public void debugPrintPawn() {
+        System.out.println(" PawnColor" +mColor);
+        System.out.println(" PawnId" +mPawnId);
+        System.out.println(" Caurrent Position" +mCurrentPosition);
+        System.out.println(" mHomeCellNo" +mHomeCellNo);
+    }
 }

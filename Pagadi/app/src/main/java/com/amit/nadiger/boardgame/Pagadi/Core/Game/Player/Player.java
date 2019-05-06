@@ -1,5 +1,6 @@
 package com.amit.nadiger.boardgame.Pagadi.Core.Game.Player;
 
+import com.amit.nadiger.boardgame.Pagadi.Core.Game.Board.Cell.Cell;
 import com.amit.nadiger.boardgame.Pagadi.Core.Game.Board.Cell.RestingCell;
 import com.amit.nadiger.boardgame.Pagadi.Core.Game.Board.Pawn.Pawn;
 
@@ -16,5 +17,10 @@ public class Player {
         mAge = age;
         mHome = cell;
         mPawns = pawns;
+        mHome.InitializeWithResidents(pawns);
     }
+    public String getName() { return mName;}
+    public int getAge() { return mAge;}
+    public RestingCell getHomeCell() { return mHome;}
+    public ArrayList<Pawn> getPawns() { return mPawns;}
 }

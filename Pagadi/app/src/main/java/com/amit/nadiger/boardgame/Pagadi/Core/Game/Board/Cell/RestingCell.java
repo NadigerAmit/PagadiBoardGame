@@ -8,24 +8,24 @@ import com.amit.nadiger.boardgame.Pagadi.Core.Game.Board.Pawn.Pawn;
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 
 public class RestingCell extends Cell{
-    private Queue<Pawn> mResidentQ ;
-    private ArrayList<Pawn> mImmegrintsList;
+    private Queue<Pawn> mResidentQ = new LinkedList<>();
+    private ArrayList<Pawn> mImmegrintsList = new ArrayList<Pawn>();
     private Constants.PAWNCOLOR mRestingCellColor = null;
     public RestingCell(int cellNo) {
         super(cellNo,Constants.CELL_TYPE.RESTING_CELL);
         // TODO Auto-generated constructor stub
     }
 
-    public void InitializeWithResidents(Pawn residents[]) {
-        mResidentQ = new LinkedList<>();
-        if(residents.length<= 0) {
+    public void InitializeWithResidents(ArrayList<Pawn> residents) {
+        if(residents.size()<= 0) {
+            System.out.println("RestingCell: InitializeWithResidents residents.size()<= 0 ");
             return;
         }
-        mRestingCellColor = residents[0].getColor();
+        mRestingCellColor = residents.get(0).getColor();
         for(int i = 0;i<Constants.NUM_OF_RESIDENT;i++) {
-            mResidentQ.add(residents[i]);
+            System.out.println(residents.get(i).getHomeCell()+" Adding Residents "+residents.get(i).getPawnId());
+            mResidentQ.add(residents.get(i));
         }
-        mImmegrintsList = new  ArrayList<Pawn>();
     }
 
     public int getNumOfResidents() {
@@ -85,5 +85,32 @@ public class RestingCell extends Cell{
 		}
 		*/
         return null;
+    }
+    public void debugPrintResidents() {
+        System.out.println("Resident Info ");
+        if(mResidentQ.size()<=0) {
+            System.out.println("No Residents! ");
+        }
+
+        for(Pawn pawn:mResidentQ) {
+            System.out.println("Current Position "+pawn.getCurrentPosition());
+            System.out.println("Home Cell no "+pawn.getHomeCell());
+            System.out.println("PawnId "+pawn.getPawnId());
+            System.out.println("Pawn Color "+pawn.getColor());
+        }
+    }
+
+    public void debugImmegrants() {
+        System.out.println("Immegrants Info ");
+        if(mImmegrintsList.size()<=0) {
+            System.out.println("No Immegrants! ");
+            return ;
+        }
+        for(Pawn pawn:mImmegrintsList) {
+            System.out.println("Current Position "+pawn.getCurrentPosition());
+            System.out.println("Home Cell no "+pawn.getHomeCell());
+            System.out.println("PawnId "+pawn.getPawnId());
+            System.out.println("Pawn Color "+pawn.getColor());
+        }
     }
 }

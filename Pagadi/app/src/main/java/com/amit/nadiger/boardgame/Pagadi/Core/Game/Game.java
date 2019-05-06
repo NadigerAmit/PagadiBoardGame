@@ -18,19 +18,25 @@ public class Game {
     private final Board mBoard;
     private GameRequest mGameReq ;
 
-    ArrayList<Pawn> mPlayer1Pawn = null;
-    ArrayList<Pawn> mPlayer2Pawn = null;
-    ArrayList<Pawn> mPlayer3Pawn = null;
-    ArrayList<Pawn> mPlayer4Pawn = null;
+    ArrayList<Pawn> mPlayer1Pawn = new ArrayList<Pawn>();
+    ArrayList<Pawn> mPlayer2Pawn = new ArrayList<Pawn>();
+    ArrayList<Pawn> mPlayer3Pawn = new ArrayList<Pawn>();
+    ArrayList<Pawn> mPlayer4Pawn = new ArrayList<Pawn>();
     Player mPlayer1 = null;
     Player mPlayer2 = null;
     Player mPlayer3 = null;
     Player mPlayer4 = null;
 
-    Game(GameRequest req) {
+    public Game(GameRequest req) {
         mBoard = new Board();
         mMode = req.getGamePlayerMode();
         mGameReq = req;
+		/*
+		ArrayList<Pawn> mPlayer1Pawn = new ArrayList<Pawn>();
+		ArrayList<Pawn> mPlayer2Pawn = new ArrayList<Pawn>();
+		ArrayList<Pawn> mPlayer3Pawn = new ArrayList<Pawn>();
+		ArrayList<Pawn> mPlayer4Pawn = new ArrayList<Pawn>();
+		*/
         initialize(req);
     }
 
@@ -38,11 +44,12 @@ public class Game {
         switch(mMode) {
             case SINGLE_PLYER : // with computer
                 CreatePawn(1,req);
-
                 mPlayer1 = new Player(req.getPlayer1Name(),
                         req.getPlayer1Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer1HomeCellNum()),
                         mPlayer1Pawn);
+
+
                 // Create the computer player automatically .
                 System.out.println("SINGLE_PLYER mode is not supported");
                 break;
@@ -50,6 +57,7 @@ public class Game {
 
                 CreatePawn(1,req);
                 CreatePawn(2,req);
+
                 mPlayer1 = new Player(req.getPlayer1Name(),
                         req.getPlayer1Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer1HomeCellNum()),
@@ -112,9 +120,9 @@ public class Game {
         }
     }
 
-    private void CreatePawn(int PlayerNum, GameRequest req) {
+    private void CreatePawn(int PlayerNum,GameRequest req) {
         int id = 0;
-        Pawn pawn = null;
+        Pawn  pawn = null;
         switch(PlayerNum) {
             case 1:
                 for(int i = 0;i<Constants.NUM_OF_RESIDENT;i++) {
@@ -146,9 +154,70 @@ public class Game {
         }
     }
 
+
+
     private void populatePlayersList() {
 
     }
+
+    public void printPlayers() {
+        System.out.println("Player 1 Details");
+        if(mPlayer1!= null) {
+            System.out.println("Player1 Name" +mPlayer1.getName());
+            System.out.println("Player1 Age" +mPlayer1.getAge());
+            System.out.println("Player1 HomeCell No" +mPlayer1.getHomeCell().toString());
+            for(Pawn pawn:mPlayer1.getPawns()) {
+                pawn.debugPrintPawn();
+            }
+        }
+
+        System.out.println("Player 2 Details");
+        if(mMode!= Constants.GAME_PLAYER_MODE.SINGLE_PLYER) {
+            System.out.println("Player2 Name" +mPlayer2.getName());
+            System.out.println("Player2 Age" +mPlayer2.getAge());
+            System.out.println("Player2 HomeCell No" +mPlayer2.getHomeCell().getCellNo());
+            for(Pawn pawn:mPlayer2.getPawns()) {
+                pawn.debugPrintPawn();
+            }
+        }
+
+		/*
+		System.out.println("Player 3 Details");
+		if(mMode!= Constants.GAME_PLAYER_MODE.SINGLE_PLYER ||
+				mMode!= Constants.GAME_PLAYER_MODE.TWO_PLYER) {
+			System.out.println("Player3 Name" +mPlayer3.getName());
+			System.out.println("Player3 Age" +mPlayer3.getAge());
+			System.out.println("Player3 HomeCell No" +mPlayer3.getHomeCell().toString());
+			for(Pawn pawn:mPlayer3.getPawns()) {
+				pawn.debugPrintPawn();
+			}
+		}
+
+		System.out.println("Player 4 Details");
+		if(mMode!= Constants.GAME_PLAYER_MODE.SINGLE_PLYER ||
+				mMode!= Constants.GAME_PLAYER_MODE.TWO_PLYER ||
+				mMode!= Constants.GAME_PLAYER_MODE.THREE_PLYER) {
+			System.out.println("Player4 Name" +mPlayer4.getName());
+			System.out.println("Player4 Age" +mPlayer4.getAge());
+			System.out.println("Player4 HomeCell No" +mPlayer4.getHomeCell().toString());
+			for(Pawn pawn:mPlayer4.getPawns()) {
+				pawn.debugPrintPawn();
+			}
+		}
+	    */
+    }
+
+
+    public void DebugPrintGame() {
+        System.out.println("Mode of game ="+this.mMode);
+        printPlayers();
+        System.out.println("Printing the board");
+        mBoard.printCellMap();
+
+    }
+
+
+
 
     /*
      * *Write initialize function (It should do following )
