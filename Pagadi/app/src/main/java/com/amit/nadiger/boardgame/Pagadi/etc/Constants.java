@@ -29,6 +29,11 @@ public final class Constants {
         FOUR_PLYER
     };
 
+    public enum DICE_TYPE {
+        FOUR_PIECE,
+        SIX_PIECE
+    };
+
 
     public enum ERROR_CODES {
 
