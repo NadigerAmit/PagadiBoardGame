@@ -30,7 +30,7 @@ public class GameRequest implements Serializable{
     private int mPlayer4HomeCellNum;
     private Constants.PAWNCOLOR mPlayer4Color;
 
-    public void gstGamePlayerMode(Constants.GAME_PLAYER_MODE playerMode) {
+    public void setGamePlayerMode(Constants.GAME_PLAYER_MODE playerMode) {
         mPlayer = playerMode;
     }
 
