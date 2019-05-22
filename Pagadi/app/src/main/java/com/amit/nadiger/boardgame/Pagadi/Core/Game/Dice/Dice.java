@@ -26,9 +26,9 @@ public class Dice {
                 mArray[1] = 2;
                 mArray[2] = 3;
                 mArray[3] = 4;
-                mArray[4] = 6;
-                mArray[5] = 8;
-                mArray[6] = 16;
+                mArray[4] = 5;
+                mArray[5] = 6;
+                mArray[6] = 12;
                 break;
             default:
                 Log.e(TAG,"Not supported "+mType);
