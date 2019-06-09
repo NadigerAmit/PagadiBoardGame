@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 import static com.amit.nadiger.boardgame.Pagadi.etc.Constants.*;
 
-public class PawnFactory {
-    private static final String TAG = "PawnFactory";
+public class PieceFactory {
+    private static final String TAG = "PieceFactory";
 
     static public Piece getPiece(int pieceType, int restingCellNo) {
         if(validateRestingCellNo(restingCellNo) == false) {

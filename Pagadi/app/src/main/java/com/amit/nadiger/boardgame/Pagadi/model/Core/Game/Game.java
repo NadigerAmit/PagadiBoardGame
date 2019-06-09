@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Board;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.RestingCell;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
-import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.PawnFactory;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.PieceFactory;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.Player;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.RobotPlayer;
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
@@ -154,25 +154,25 @@ public class Game {
         switch(PlayerNum) {
             case 1:
                 for(int i = 0;i<Constants.NUM_OF_RESIDENT;i++) {
-                    piece = PawnFactory.getPiece(req.getPlayer1Type(),req.getPlayer1HomeCellNum());
+                    piece = PieceFactory.getPiece(req.getPlayer1Type(),req.getPlayer1HomeCellNum());
                     mPlayer1Piece.add(piece);
                 }
                 break;
             case 2:
                 for(int i = 0;i<Constants.NUM_OF_RESIDENT;i++) {
-                    piece = PawnFactory.getPiece(req.getPlayer2Type(),req.getPlayer2HomeCellNum());
+                    piece = PieceFactory.getPiece(req.getPlayer2Type(),req.getPlayer2HomeCellNum());
                     mPlayer2Piece.add(piece);
                 }
                 break;
             case 3:
                 for(int i = 0;i<Constants.NUM_OF_RESIDENT;i++) {
-                    piece = PawnFactory.getPiece(req.getPlayer3Type(),req.getPlayer3HomeCellNum());
+                    piece = PieceFactory.getPiece(req.getPlayer3Type(),req.getPlayer3HomeCellNum());
                     mPlayer3Piece.add(piece);
                 }
                 break;
             case 4:
                 for(int i = 0;i<Constants.NUM_OF_RESIDENT;i++) {
-                    piece = PawnFactory.getPiece(req.getPlayer4Type(),req.getPlayer4HomeCellNum());
+                    piece = PieceFactory.getPiece(req.getPlayer4Type(),req.getPlayer4HomeCellNum());
                     mPlayer4Piece.add(piece);
                 }
                 break;
