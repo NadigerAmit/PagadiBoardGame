@@ -9,14 +9,15 @@ public final class Constants {
     public static final int BOTTOM_RESTING_CELL = 22; //Down
     public static final int RIGHT_RESTING_CELL  = 14;
 
-    public enum PAWNCOLOR{
-        WHITE,
-        BLACK,
-        RED,
-        GREEN
-    };
+    public static final int EMPTY = 0;
+    public static final int WKING  = 1;  // WhitePiece
+    public static final int WQUEEN = 2;  // RedPiece
+    public static final int BKING  = 3;  // BlackPiece
+    public static final int BQUEEN = 4;  // GreenPiece
+
 
     public enum CELL_TYPE {
+        INVALID,
         RESTING_CELL,
         DESTINATION_CELL,
         NORMAL_CELL
@@ -34,9 +35,7 @@ public final class Constants {
         SIX_PIECE
     };
 
-
-    public enum ERROR_CODES {
-
-    }
+    // Error Codes
+    public static final int  INVALID_GAMEID = 9999999;
 
 }
