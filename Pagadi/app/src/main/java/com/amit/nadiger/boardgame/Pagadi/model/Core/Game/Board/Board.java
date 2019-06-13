@@ -18,8 +18,11 @@ import java.util.Map;
 
 public class Board {
     static private Board _singleton = null;
-    private MutableLiveData<ArrayList<Cell>> mAllCells;
+   private MutableLiveData<ArrayList<Cell>> mAllCells;
+   //private MutableLiveData< ArrayList<MutableLiveData<Cell>>> mAllCells;
     private ArrayList<Cell> cellList = new ArrayList<>();
+  // private  ArrayList<MutableLiveData<Cell>> cellList = new ArrayList<>();
+
 
     private Map <Integer,Cell> mCellMap = new HashMap<Integer,Cell>(); // Map of cell no and Actual cell it self
     private Cell mArrOfCells[][];
@@ -32,17 +35,20 @@ public class Board {
         return _singleton;
     }
 
-    public LiveData<ArrayList<Cell>> getAllCells() {
-        return mAllCells;
-    }
+    public LiveData<ArrayList<Cell>> getAllCells() { return mAllCells;  }
+    //public MutableLiveData< ArrayList<MutableLiveData<Cell>>> getAllCells() { return mAllCells;  }
+
+
     public ArrayList<Cell> getCellList() {
         ArrayList<Cell> CellList = new ArrayList<Cell>(mCellMap.size());
         CellList.addAll(mCellMap.values());
         return CellList;
     }
+
     public Board() {  // I know should be private for it be singleton.
         int count = 0;
-        mAllCells = new MutableLiveData<ArrayList<Cell>>();
+      //  mAllCells = new MutableLiveData<>();
+        mAllCells = new MutableLiveData<>();
         mArrOfCells = new Cell[Constants.ROW][Constants.COL];
         for(int i = 0;i<Constants.ROW;i++) {
             for(int j = 0;j<Constants.COL;j++) {
@@ -58,6 +64,7 @@ public class Board {
                 }
                 mCellMap.put(count,mArrOfCells[i][j]);  // Insert it in to map
                 cellList.add(mArrOfCells[i][j]);
+                //mAllCells.add(cellList);
                 count++;
             }
         }
@@ -76,7 +83,7 @@ public class Board {
     }
 
     public void updateLiveData() {
-        mAllCells.setValue(cellList);
+      //  mAllCells.setValue(cellList);
     }
 
     public Cell getCell(int cellNo) { return mCellMap.get(cellNo); }

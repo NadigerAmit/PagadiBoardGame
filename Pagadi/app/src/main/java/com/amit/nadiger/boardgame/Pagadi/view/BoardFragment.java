@@ -1,44 +1,44 @@
 package com.amit.nadiger.boardgame.Pagadi.view;
 
-import android.app.Activity;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.amit.nadiger.boardgame.Pagadi.R;
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 import com.amit.nadiger.boardgame.Pagadi.etc.Utility;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.Cell;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Game;
 import com.amit.nadiger.boardgame.Pagadi.model.GameRequest;
-import com.amit.nadiger.boardgame.Pagadi.viewmodel.BoardViewModel;
+import com.amit.nadiger.boardgame.Pagadi.viewmodel.CellViewModel;
+import com.amit.nadiger.boardgame.Pagadi.viewmodel.PieceViewModel;
 
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
-
 public class BoardFragment extends Fragment {
     private static final String TAG = "BoardFragment";
     private Context mContext;
+    // class member variable to save the X,Y coordinates
+    private float[] mLastTouchDownXY = new float[2];
     UiBoard mBoard;
     private LinearLayout mLinearLayout;
     private View mView;
     static private Game mGame = null;
     private LinearLayout homelayout;
-    private BoardViewModel mBoardViewModel = null;
+    private CellViewModel mCellViewModel = null;
+    private PieceViewModel mPieceViewModel = null;
 
     public static BoardFragment newInstance() {
         Log.e(TAG, "BoardFragment newInstance ");
@@ -58,7 +58,7 @@ public class BoardFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.e(TAG, "BoardFragment onActivityCreated() ");
-        //mBoardViewModel.
+        //mCellViewModel.
     }
 /*
     @Override
@@ -92,14 +92,16 @@ public class BoardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         AttributeSet attrs = null;
-        mBoardViewModel = ViewModelProviders.of(this).get(BoardViewModel.class);
-        // we should not create the BoardViewModel instance with new , as it will create new view model each time activity/Fragment is re-created.
+        mCellViewModel = ViewModelProviders.of(this).get(CellViewModel.class);
+        mPieceViewModel = ViewModelProviders.of(this).get(PieceViewModel.class);
+        // we should not create the CellViewModel instance with new , as it will create new view model each time activity/Fragment is re-created.
         // instead we should get it from android system i.e viewModel providers , so that viewModel knows to which activity or view it is attached to
         // when activity or fragment it is attached to is destroyed , viewModel can remove itself to avoid memory leaks.
         mBoard = new UiBoard(container.getContext(),attrs);
-        mBoardViewModel.init(getGameRequest());
-        mBoard.setViewModel(mBoardViewModel);
-        mBoardViewModel.getAllCells().observe(this, new Observer<ArrayList<Cell>>() {
+        mCellViewModel.init(getGameRequest());
+        mBoard.setViewModel(mCellViewModel);
+
+        mCellViewModel.getAllCells().observe(this, new Observer<ArrayList<Cell>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Cell> cells) {
                 // update the Board and redraw the board
@@ -109,33 +111,68 @@ public class BoardFragment extends Fragment {
 
             }
         });
+
+        mPieceViewModel.init(getGameRequest());
+        mPieceViewModel.getMediator().observe(this, new Observer<LiveData<Piece>>() {
+                    @Override
+                    public void onChanged(@android.support.annotation.Nullable LiveData<Piece> pieceLiveData) {
+                        Log.e(TAG,"Pice changed Home cell = "+ pieceLiveData.getValue().getHomeCell());
+                        Log.e(TAG,"Pice changed Type  = "+ pieceLiveData.getValue().getPieceType());
+                        Log.e(TAG,"Pice changed Type  = "+ pieceLiveData.getValue().getPawnId());
+                        reDrawBoard();
+                    }
+                });
+
         mBoard.setClickable(true);
-        mBoard.setOnClickListener(new View.OnClickListener() {
+        // the purpose of the touch listener is just to store the touch X,Y coordinates
+        View.OnTouchListener touchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                // save the X,Y coordinates
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    mLastTouchDownXY[0] = event.getX();
+                    mLastTouchDownXY[1] = event.getY();
+                }
+
+                // let the touch event pass on to whoever needs it
+                return false;
+            }
+        };
+
+        View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int[] location = new int[2];
-                v.getLocationOnScreen(location);
-                Log.e(TAG,"View is clicked x = "+location[0] + " y "+location[1]);
-               // board.getSquare((int)v.getX(),(int)v.getY());
-               // int cellNo = mBoardViewModel.get(location[0],location[1]).getCellNo();
+                // retrieve the stored coordinates
+                float x = mLastTouchDownXY[0];
+                float y = mLastTouchDownXY[1];
                 int cellNo = 1;
-                mBoardViewModel.setOccupied(cellNo,true);
-                cellNo  = Utility.getSquare(location[0],location[1]);
+
+                // use the coordinates for whatever
+                Log.e("TAG", "onLongClick: x = " + x + ", y = " + y);
+
+
+                cellNo  = mBoard.coOrdinateToSquare((int) x,(int) y);
                 Log.e(TAG,"Cell no = "+cellNo);
+
             }
-        });
+        };
+
      //   board.setGame(getgameInstance());
+        mBoard.setOnTouchListener(touchListener);
+        mBoard.setOnClickListener(clickListener);
         return mBoard;
     }
 
     private void reDrawBoard() {
         Log.e(TAG,"reDrawBoard is called ");
-        mBoardViewModel.DebugPrintGame();
+        mCellViewModel.DebugPrintGame();
         mBoard.invalidate();
     }
 
     private GameRequest getGameRequest() {
         GameRequest req = new GameRequest();
+        req.setGameId(-1);
         req.setGamePlayerMode(Constants.GAME_PLAYER_MODE.TWO_PLYER);
         req.setPlayer1Age(37);
         req.setPlayer1Name("Jai Shree Ram");

@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class GameRequest implements Serializable{
     private Constants.GAME_PLAYER_MODE mPlayer;
     // Player1 properties
+    private Integer mGameId = -1;
     private String mPlayer1Name;
     private int mPlayer1Age;
     private int mPlayer1HomeCellNum;
@@ -36,6 +37,14 @@ public class GameRequest implements Serializable{
 
     public Constants.GAME_PLAYER_MODE getGamePlayerMode() {
         return mPlayer ;
+    }
+
+    public void setGameId(Integer gameId) {
+        mGameId = gameId;
+    }
+
+    public Integer getGameId() {
+        return mGameId ;
     }
 
     public void setPlayer1Name(String player1Name) {

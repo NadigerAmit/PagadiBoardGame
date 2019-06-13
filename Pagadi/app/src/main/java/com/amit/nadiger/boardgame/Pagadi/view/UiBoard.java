@@ -20,7 +20,7 @@ import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 import com.amit.nadiger.boardgame.Pagadi.etc.Utility;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Game;
-import com.amit.nadiger.boardgame.Pagadi.viewmodel.BoardViewModel;
+import com.amit.nadiger.boardgame.Pagadi.viewmodel.CellViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class UiBoard extends View {
     private Paint mCursorSquarePaint;
     private Paint mRestingCellPaint;
     private Paint mFinalDestinationPaint;
-    private BoardViewModel mBoardViewModel = null;
+    private CellViewModel mCellViewModel = null;
 
     private ArrayList<Paint> mMoveMarkPaint;
 
@@ -91,7 +91,7 @@ public class UiBoard extends View {
         Log.e(TAG,"Parameterized Board Constructor for Board View");
         //pos = new Position();
         android.app.Activity activity = (Activity) context;
-        //mBoardViewModel = ViewModelProviders.of(activity).get(BoardViewModel.class);
+        //mCellViewModel = ViewModelProviders.of(activity).get(CellViewModel.class);
 
     //    mGame = game;
         Log.e(TAG,"Game assigned ");
@@ -124,8 +124,8 @@ public class UiBoard extends View {
         setColors();
     }
 
-    public  void setViewModel(BoardViewModel vm) {
-        mBoardViewModel = vm;
+    public  void setViewModel(CellViewModel vm) {
+        mCellViewModel = vm;
     }
 
     /** Configure the board's colors. */
@@ -261,12 +261,12 @@ public class UiBoard extends View {
                 final int xCrd = getXCrd(x);
                 final int yCrd = getYCrd(y);
                 Paint paint ;
-                if(mBoardViewModel == null) {
+                if(mCellViewModel == null) {
                     Log.e(TAG,"mGame is null , returning !!s");
                     return;
                 }
                 int square = Utility.getSquare(x,y);
-                final Constants.CELL_TYPE currentCellType = mBoardViewModel.cellType(square);;
+                final Constants.CELL_TYPE currentCellType = mCellViewModel.cellType(square);;
 
                 if(currentCellType == INVALID) {
                     Log.e(TAG,"Current Cell is null x = "+ x +" y = "+y);
@@ -274,7 +274,7 @@ public class UiBoard extends View {
                 }
                 if(currentCellType == Constants.CELL_TYPE.RESTING_CELL) {
                     paint = mRestingCellPaint;
-                    pieceType = mBoardViewModel.getPieceTypes(square); // TODO; this is wrong.
+                    pieceType = mCellViewModel.getPieceTypes(square); // TODO; this is wrong.
                 } else if (currentCellType == Constants.CELL_TYPE.DESTINATION_CELL) {
                     paint = mFinalDestinationPaint;
                 } else {
@@ -285,10 +285,12 @@ public class UiBoard extends View {
 
              //   Log.e(TAG,"OnDraw for Board View xCrd= "+xCrd+" yCrd = "+yCrd+" xCrd + mSqSize = " +
              //           " "+xCrd + mSqSize + " yCrd + mSqSize  "+yCrd + mSqSize);
-                //OnDraw for Board View xCrd= 0 yCrd = 864 xCrd + mSqSize =  0216 yCrd + mSqSize  864216
+             //     OnDraw for Board View xCrd= 0 yCrd = 864 xCrd + mSqSize =  0216 yCrd + mSqSize  864216
 
                 // get the piece from the current cell
-                 pieceType = mBoardViewModel.getPieceTypes(square);
+                 pieceType = mCellViewModel.getPieceTypes(square);
+                 if(square == 0) pieceType = 2;
+                if(square == 16) pieceType =  4;
                  if(pieceType != Constants.EMPTY) {
                      Log.e(TAG,"Sq = "+square+ " Piece Type "+pieceType);
                      drawPiece(canvas, xCrd + mSqSize / 2, yCrd + mSqSize / 2, pieceType);
@@ -427,12 +429,12 @@ public class UiBoard extends View {
         return mY0 + mSqSize * (mFlipped ? y : 7 - y);
     }
 
-    protected int getXSq(int xCrd) {
+    public int getXSq(int xCrd) {
         int t = (xCrd - mX0) / mSqSize;
         return mFlipped ? 7 - t : t;
     }
 
-    protected int getYSq(int yCrd) {
+    public int getYSq(int yCrd) {
         int t = (yCrd - mY0) / mSqSize;
         return mFlipped ? t : 7 - t;
     }
@@ -445,7 +447,7 @@ public class UiBoard extends View {
      * @return The square corresponding to the mouse event, or -1 if outside
      *         board.
      */
-    int eventToSquare(MotionEvent evt) {
+    public int eventToSquare(MotionEvent evt) {
         int xCrd = (int) (evt.getX());
         int yCrd = (int) (evt.getY());
 
@@ -453,10 +455,68 @@ public class UiBoard extends View {
         if (mSqSize > 0) {
             int x = getXSq(xCrd);
             int y = getYSq(yCrd);
+            Log.e(TAG,"x = "+x + "  y = "+y);
             if ((x >= 0) && (x < 8) && (y >= 0) && (y < 8)) {
                 sq = Utility.getSquare(x, y);
             }
         }
+        return sq;
+    }
+
+    public int coOrdinateToSquare(int xCrd ,int yCrd) {
+
+        int sq = -1;
+        if (mSqSize > 0) {
+            int x = getXSq(xCrd);
+            int y = getYSq(yCrd);
+            Log.e(TAG,"x = "+x + "  y = "+y);
+            if ((x >= 0) && (x < 5) && (y >= 0) && (y < 5)) {
+                sq = Utility.getSquare(x, y);
+            }
+        }
+        return transformCoOrdinateSquareToCells(sq);
+    }
+
+// This is function is to convert to below table
+/*****************
+0 -20
+1 -21
+2 -22
+3 -23
+4 -24
+5 -16
+6- 17
+7 -18
+8 -19
+9 -20
+10-10
+11-11
+12-12
+13-13
+14-14
+15-05
+16-06
+17-07
+18-08
+19-9
+20-0
+21-1
+22-2
+23-3
+24-4
+**************/
+    int transformCoOrdinateSquareToCells(int sq) {
+        int factor = 0;
+        if(sq >= 0 && sq <= 4) {
+            factor = 20;
+        } else if(sq>=5 && sq <=9) {
+            factor = 10;
+        } else if(sq>=15 && sq <=19) {
+            factor = -10;
+        } else if(sq >= 20 && sq <= 24) {
+            factor = -20;
+        }
+        sq +=factor;
         return sq;
     }
 

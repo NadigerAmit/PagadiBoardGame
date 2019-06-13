@@ -1,10 +1,14 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.databinding.BaseObservable;
 import android.util.Log;
 
 import java.util.ArrayList;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 
+//abstract public class Cell extends MutableLiveData<Cell> {
 abstract public class Cell {
     private static final String TAG = "Cell";
     final private int mCellNo;
@@ -38,7 +42,9 @@ abstract public class Cell {
     public void setIsOccupied(boolean isOccupied) {
         Log.e(TAG," Before mIsOccupied = "+mIsOccupied);
         mIsOccupied = isOccupied;
+     //   setValue(this);
         Log.e(TAG," After mIsOccupied = "+mIsOccupied);
+        //notifyChange();
     }
 
 }

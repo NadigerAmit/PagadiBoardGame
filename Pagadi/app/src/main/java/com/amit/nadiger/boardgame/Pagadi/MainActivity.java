@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         req.setPlayer2Type(Constants.BKING);
         req.setPlayer2HomeCellNum(22);
 
-        Game game = new Game(req);
+        Game game = Game.getInstance(req);
         game.DebugPrintGame();
     }
 }

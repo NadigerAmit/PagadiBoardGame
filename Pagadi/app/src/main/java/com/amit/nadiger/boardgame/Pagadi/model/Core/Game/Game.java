@@ -1,5 +1,9 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -24,6 +28,7 @@ public class Game {
     private GameRequest mGameReq ;
     static int gameNum = 0;
     private int mGameId ;
+    private static Game mGameInstance = null;
     final private Player mPlayingOrder[] = new Player[4];
 
     //Queue for maintaining the order .
@@ -33,12 +38,16 @@ public class Game {
     ArrayList<Piece> mPlayer2Piece = new ArrayList<Piece>();
     ArrayList<Piece> mPlayer3Piece = new ArrayList<Piece>();
     ArrayList<Piece> mPlayer4Piece = new ArrayList<Piece>();
+
+    //MediatorLive data is LiveData subclass which may observe other LiveData objects and react on OnChanged events from them.
+    MediatorLiveData<LiveData<Piece>> mediator = new MediatorLiveData<>();
+
     Player mPlayer1 = null;
     Player mPlayer2 = null;
     Player mPlayer3 = null;
     Player mPlayer4 = null;
 
-    public Game(GameRequest req) {
+    private  Game(GameRequest req) {
         mBoard = new Board();
         mMode = req.getGamePlayerMode();
         mGameReq = req;
@@ -47,6 +56,54 @@ public class Game {
         initialize(req);
     }
 
+    public static Game getInstance(GameRequest req) {
+        if(req.getGameId() == -1) {
+            if(mGameInstance == null) {
+                mGameInstance = new Game(req);
+            }
+        } else {
+            // Try to retrive the game from storage i.e shared preferance.
+        }
+        return mGameInstance;
+    }
+
+    private void createMediatorLiveDataOfPlayers() {
+       // Populate from all 4 Piece lists
+        for (LiveData<Piece> piece : mPlayer1Piece) {
+            mediator.addSource(piece, new Observer<Piece>() {
+                @Override
+                public void onChanged(@Nullable Piece piece) {
+                    mediator.setValue(piece);
+                }
+            });
+        }
+        for (LiveData<Piece> piece : mPlayer2Piece) {
+            mediator.addSource(piece, new Observer<Piece>() {
+                @Override
+                public void onChanged(@Nullable Piece piece) {
+                    mediator.setValue(piece);
+                }
+            });
+        }
+        for (LiveData<Piece> piece : mPlayer3Piece) {
+            mediator.addSource(piece, new Observer<Piece>() {
+                @Override
+                public void onChanged(@Nullable Piece piece) {
+                    mediator.setValue(piece);
+                }
+            });
+        }
+        for (LiveData<Piece> piece : mPlayer4Piece) {
+            mediator.addSource(piece, new Observer<Piece>() {
+                @Override
+                public void onChanged(@Nullable Piece piece) {
+                    mediator.setValue(piece);
+                }
+            });
+        }
+    }
+
+    public MediatorLiveData<LiveData<Piece>> getMediator()  { return mediator;}
 
     public Queue<Player> getPlayingOrder() {
         return mPlayingOrderQueue;
@@ -146,6 +203,7 @@ public class Game {
             default:
                 break;
         }
+        createMediatorLiveDataOfPlayers();
     }
 
     private void CreatePiece(int PlayerNum, GameRequest req) {

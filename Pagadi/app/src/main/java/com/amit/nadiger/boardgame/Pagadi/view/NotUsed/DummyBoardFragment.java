@@ -61,7 +61,7 @@ public class DummyBoardFragment extends Fragment {
 
 
       //  mAdapter = new CellAdapter(mContext);
-        Game game = new Game(getGameRequest());
+        Game game = Game.getInstance(getGameRequest());
      //   ((CellAdapter) mAdapter).mapCells(game.getBoard().getCellList());
         mRecyclerView.setAdapter(mAdapter);
 

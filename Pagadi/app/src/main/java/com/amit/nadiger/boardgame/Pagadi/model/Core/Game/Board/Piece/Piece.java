@@ -1,9 +1,12 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece;
 
+import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 
-abstract public class Piece {
+abstract public class Piece extends MutableLiveData {
     private int mCurrentPosition;
     protected int mPieceType;
     private int mPawnId;
@@ -38,7 +41,9 @@ abstract public class Piece {
     }
 
     public void moveToPosition(int steps) {
+        Log.e(TAG,"moveToPosition " + steps );
         mCurrentPosition = mCurrentPosition + steps ; // This is wrong :) ;
+        this.setValue(this);
         // get next position
         // Rules.getPosition();
     }
