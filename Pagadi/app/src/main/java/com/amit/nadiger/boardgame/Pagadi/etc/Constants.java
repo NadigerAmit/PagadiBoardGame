@@ -14,6 +14,7 @@ public final class Constants {
     public static final int WQUEEN = 2;  // RedPiece
     public static final int BKING  = 3;  // BlackPiece
     public static final int BQUEEN = 4;  // GreenPiece
+    public static final int INVALID_PIECE_MOVE = -1;
 
 
     public enum CELL_TYPE {

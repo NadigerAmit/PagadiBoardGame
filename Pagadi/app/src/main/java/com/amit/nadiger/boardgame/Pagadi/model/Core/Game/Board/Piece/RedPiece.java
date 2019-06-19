@@ -1,12 +1,13 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece;
 
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Path.Path;
 
 public class RedPiece extends Piece {
     static private int id = 0;
-    public RedPiece(int position) {
+    public  RedPiece(int position, Path path) {
 
-        super(position, Constants.WQUEEN, id++);
+        super(position, Constants.WQUEEN, id++,path);
         if(id >Constants.NUM_OF_RESIDENT)
             System.out.println("Error id ="+id);
         // TODO Auto-generated constructor stub

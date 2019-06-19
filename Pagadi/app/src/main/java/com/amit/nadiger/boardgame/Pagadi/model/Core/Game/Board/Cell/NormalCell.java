@@ -6,16 +6,24 @@ import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 import java.util.ArrayList;
 
 public class NormalCell extends Cell {
-    private Piece mRenter;
+    private ArrayList<Piece> mPiceList = new ArrayList<>();
 
     public NormalCell(int cellNo) {
         super(cellNo, Constants.CELL_TYPE.NORMAL_CELL);
-        mRenter = null;
     }
-    public Piece getPiece() {return mRenter;}
 
-    public ArrayList<Piece> getResidents() {
-        return null;
-        //return  new ArrayList(mResidentQ);
+    public ArrayList<Piece> getAllPieceOfCell() {
+        return mPiceList;
     }
+
+    public void addPieceToCell(Piece piece) {
+        mPiceList.add(piece);
+        setValue(this);
+    }
+
+    public void retrivePieceFromCell(Piece piece) {
+        mPiceList.remove(piece);
+        setValue(this);
+    }
+
 }

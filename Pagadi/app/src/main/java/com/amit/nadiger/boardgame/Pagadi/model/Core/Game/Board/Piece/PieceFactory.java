@@ -5,6 +5,9 @@ import android.util.Log;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Board;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.Cell;
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.RestingCell;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Path.Path;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Path.PathFactory;
 
 import java.util.ArrayList;
 
@@ -19,31 +22,37 @@ public class PieceFactory {
                     + " reached max of "+Constants.NUM_OF_RESIDENT);
             return null;
         }
+        // Creating the Path for each pawn .
+        Path path = PathFactory.getPath(restingCellNo);
+        if(path == null) {
+            Log.e(TAG,"Path is null for CellNo = "+restingCellNo);
+            return null;
+        }
         switch(pieceType) {
             case WKING:
                 if(WhitePiece.getInstanceCount()>=
                         Constants.NUM_OF_RESIDENT) {
                     return null;
                 }
-                return new WhitePiece(restingCellNo);  // hardCoaded to Top up seat
+                return new WhitePiece(restingCellNo,path);  // hardCoaded to Top up seat
             case BKING:
                 if(BlackPiece.getInstanceCount()>=
                         Constants.NUM_OF_RESIDENT) {
                     return null;
                 }
-                return new BlackPiece(restingCellNo);
+                return new BlackPiece(restingCellNo,path);
             case WQUEEN:
                 if(RedPiece.getInstanceCount()>=
                         Constants.NUM_OF_RESIDENT) {
                     return null;
                 }
-                return new RedPiece(restingCellNo);
+                return new RedPiece(restingCellNo,path);
             case BQUEEN:
                 if(GreenPiece.getInstanceCount()>=
                         Constants.NUM_OF_RESIDENT) {
                     return null;
                 }
-                return new GreenPiece(restingCellNo);
+                return new GreenPiece(restingCellNo,path);
             default:
                 return null;
         }
@@ -51,7 +60,8 @@ public class PieceFactory {
 
     static private boolean validateRestingCellNo(int restingCellNo) {
         Board mboard = Board.getInstance();
-        Cell cell = mboard.getCell(restingCellNo);
+        if(mboard.isRestingCell(restingCellNo) == false) return false;
+        RestingCell cell = (RestingCell) mboard.getCell(restingCellNo);
         if(cell.getCellType() != Constants.CELL_TYPE.RESTING_CELL) {
             return false; // the the cell is other than resting cell , return false;
         }

@@ -40,12 +40,14 @@ public class Game {
     ArrayList<Piece> mPlayer4Piece = new ArrayList<Piece>();
 
     //MediatorLive data is LiveData subclass which may observe other LiveData objects and react on OnChanged events from them.
-    MediatorLiveData<LiveData<Piece>> mediator = new MediatorLiveData<>();
+    MediatorLiveData<LiveData<Piece>> mPieceMediator = new MediatorLiveData<>();
 
     Player mPlayer1 = null;
     Player mPlayer2 = null;
     Player mPlayer3 = null;
     Player mPlayer4 = null;
+
+
 
     private  Game(GameRequest req) {
         mBoard = new Board();
@@ -67,43 +69,47 @@ public class Game {
         return mGameInstance;
     }
 
-    private void createMediatorLiveDataOfPlayers() {
+    public LinkedList<Player> getPlayerList() {
+        return (LinkedList)mPlayingOrderQueue;
+    }
+
+    private void addSourceToPieceMediator() {
        // Populate from all 4 Piece lists
         for (LiveData<Piece> piece : mPlayer1Piece) {
-            mediator.addSource(piece, new Observer<Piece>() {
+            mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
-                    mediator.setValue(piece);
+                    mPieceMediator.setValue(piece);
                 }
             });
         }
         for (LiveData<Piece> piece : mPlayer2Piece) {
-            mediator.addSource(piece, new Observer<Piece>() {
+            mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
-                    mediator.setValue(piece);
+                    mPieceMediator.setValue(piece);
                 }
             });
         }
         for (LiveData<Piece> piece : mPlayer3Piece) {
-            mediator.addSource(piece, new Observer<Piece>() {
+            mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
-                    mediator.setValue(piece);
+                    mPieceMediator.setValue(piece);
                 }
             });
         }
         for (LiveData<Piece> piece : mPlayer4Piece) {
-            mediator.addSource(piece, new Observer<Piece>() {
+            mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
-                    mediator.setValue(piece);
+                    mPieceMediator.setValue(piece);
                 }
             });
         }
     }
 
-    public MediatorLiveData<LiveData<Piece>> getMediator()  { return mediator;}
+    public MediatorLiveData<LiveData<Piece>> getPieceMediator()  { return mPieceMediator;}
 
     public Queue<Player> getPlayingOrder() {
         return mPlayingOrderQueue;
@@ -118,13 +124,13 @@ public class Game {
                 mPlayer1 = new Player(req.getPlayer1Name(),
                         req.getPlayer1Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer1HomeCellNum()),
-                        mPlayer1Piece);
+                        mPlayer1Piece,mBoard);
                 // Create the Robot Player
                 CreatePiece(2,req);
                 mPlayer2 = new RobotPlayer(req.getPlayer2Name(),
                         req.getPlayer2Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer3HomeCellNum()),
-                        mPlayer2Piece);
+                        mPlayer2Piece,mBoard);
                 System.out.println("SINGLE_PLYER mode is not supported");
                 mPlayingOrderQueue.add(mPlayer1);
                 mPlayingOrderQueue.add(mPlayer2);
@@ -137,12 +143,12 @@ public class Game {
                 mPlayer1 = new Player(req.getPlayer1Name(),
                         req.getPlayer1Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer1HomeCellNum()),
-                        mPlayer1Piece);
+                        mPlayer1Piece,mBoard);
 
                 mPlayer2 = new Player(req.getPlayer2Name(),
                         req.getPlayer2Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer2HomeCellNum()),
-                        mPlayer2Piece);
+                        mPlayer2Piece,mBoard);
                 mPlayingOrderQueue.add(mPlayer1);
                 mPlayingOrderQueue.add(mPlayer2);
 
@@ -156,17 +162,17 @@ public class Game {
                 mPlayer1 = new Player(req.getPlayer1Name(),
                         req.getPlayer1Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer1HomeCellNum()),
-                        mPlayer1Piece);
+                        mPlayer1Piece,mBoard);
 
                 mPlayer2 = new Player(req.getPlayer2Name(),
                         req.getPlayer2Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer2HomeCellNum()),
-                        mPlayer2Piece);
+                        mPlayer2Piece,mBoard);
 
                 mPlayer3 = new Player(req.getPlayer3Name(),
                         req.getPlayer3Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer3HomeCellNum()),
-                        mPlayer3Piece);
+                        mPlayer3Piece,mBoard);
                 mPlayingOrderQueue.add(mPlayer1);
                 mPlayingOrderQueue.add(mPlayer2);
                 mPlayingOrderQueue.add(mPlayer3);
@@ -179,22 +185,22 @@ public class Game {
                 mPlayer1 = new Player(req.getPlayer1Name(),
                         req.getPlayer1Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer1HomeCellNum()),
-                        mPlayer1Piece);
+                        mPlayer1Piece,mBoard);
 
                 mPlayer2 = new Player(req.getPlayer2Name(),
                         req.getPlayer2Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer2HomeCellNum()),
-                        mPlayer2Piece);
+                        mPlayer2Piece,mBoard);
 
                 mPlayer3 = new Player(req.getPlayer3Name(),
                         req.getPlayer3Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer3HomeCellNum()),
-                        mPlayer3Piece);
+                        mPlayer3Piece,mBoard);
 
                 mPlayer4 = new Player(req.getPlayer4Name(),
                         req.getPlayer3Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer4HomeCellNum()),
-                        mPlayer4Piece);
+                        mPlayer4Piece,mBoard);
                 mPlayingOrderQueue.add(mPlayer1);
                 mPlayingOrderQueue.add(mPlayer2);
                 mPlayingOrderQueue.add(mPlayer3);
@@ -203,7 +209,7 @@ public class Game {
             default:
                 break;
         }
-        createMediatorLiveDataOfPlayers();
+        addSourceToPieceMediator();
     }
 
     private void CreatePiece(int PlayerNum, GameRequest req) {
@@ -252,7 +258,7 @@ public class Game {
             System.out.println("Player1 Name" +mPlayer1.getName());
             System.out.println("Player1 Age" +mPlayer1.getAge());
             System.out.println("Player1 HomeCell No" +mPlayer1.getHomeCell().toString());
-            for(Piece piece :mPlayer1.getPawns()) {
+            for(Piece piece :mPlayer1.getPieces()) {
                 piece.debugPrintPawn();
             }
         }
@@ -262,7 +268,7 @@ public class Game {
             System.out.println("Player2 Name" +mPlayer2.getName());
             System.out.println("Player2 Age" +mPlayer2.getAge());
             System.out.println("Player2 HomeCell No" +mPlayer2.getHomeCell().getCellNo());
-            for(Piece piece :mPlayer2.getPawns()) {
+            for(Piece piece :mPlayer2.getPieces()) {
                 piece.debugPrintPawn();
             }
         }
@@ -274,7 +280,7 @@ public class Game {
 			System.out.println("Player3 Name" +mPlayer3.getName());
 			System.out.println("Player3 Age" +mPlayer3.getAge());
 			System.out.println("Player3 HomeCell No" +mPlayer3.getHomeCell().toString());
-			for(Piece pawn:mPlayer3.getPawns()) {
+			for(Piece pawn:mPlayer3.getPieces()) {
 				pawn.debugPrintPawn();
 			}
 		}
@@ -286,7 +292,7 @@ public class Game {
 			System.out.println("Player4 Name" +mPlayer4.getName());
 			System.out.println("Player4 Age" +mPlayer4.getAge());
 			System.out.println("Player4 HomeCell No" +mPlayer4.getHomeCell().toString());
-			for(Piece pawn:mPlayer4.getPawns()) {
+			for(Piece pawn:mPlayer4.getPieces()) {
 				pawn.debugPrintPawn();
 			}
 		}

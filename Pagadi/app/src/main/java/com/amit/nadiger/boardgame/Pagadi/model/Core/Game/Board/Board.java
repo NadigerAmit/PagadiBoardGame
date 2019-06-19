@@ -2,7 +2,10 @@ package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board;
 
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
 
 import com.amit.nadiger.boardgame.Pagadi.etc.Utility;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.Cell;
@@ -18,12 +21,9 @@ import java.util.Map;
 
 public class Board {
     static private Board _singleton = null;
-   private MutableLiveData<ArrayList<Cell>> mAllCells;
-   //private MutableLiveData< ArrayList<MutableLiveData<Cell>>> mAllCells;
+   private MediatorLiveData<LiveData<Cell>> mCellMediator = new MediatorLiveData<>();
+
     private ArrayList<Cell> cellList = new ArrayList<>();
-  // private  ArrayList<MutableLiveData<Cell>> cellList = new ArrayList<>();
-
-
     private Map <Integer,Cell> mCellMap = new HashMap<Integer,Cell>(); // Map of cell no and Actual cell it self
     private Cell mArrOfCells[][];
     private int mTotalNumOfCells = 0;
@@ -35,20 +35,23 @@ public class Board {
         return _singleton;
     }
 
-    public LiveData<ArrayList<Cell>> getAllCells() { return mAllCells;  }
-    //public MutableLiveData< ArrayList<MutableLiveData<Cell>>> getAllCells() { return mAllCells;  }
+    public MediatorLiveData<LiveData<Cell>> getCellMediator() {
+        return mCellMediator;
+    }
 
-
-    public ArrayList<Cell> getCellList() {
-        ArrayList<Cell> CellList = new ArrayList<Cell>(mCellMap.size());
-        CellList.addAll(mCellMap.values());
-        return CellList;
+    public boolean isRestingCell(int cellNo) {
+        if(cellNo != Constants.BOTTOM_RESTING_CELL &&
+                cellNo != Constants.RIGHT_RESTING_CELL &&
+                cellNo != Constants.TOP_RESTING_CELL &&
+                cellNo != Constants.LEFT_RESTING_CELL) {
+            return false;
+        }
+        return true;
     }
 
     public Board() {  // I know should be private for it be singleton.
         int count = 0;
-      //  mAllCells = new MutableLiveData<>();
-        mAllCells = new MutableLiveData<>();
+
         mArrOfCells = new Cell[Constants.ROW][Constants.COL];
         for(int i = 0;i<Constants.ROW;i++) {
             for(int j = 0;j<Constants.COL;j++) {
@@ -63,12 +66,15 @@ public class Board {
                     mArrOfCells[i][j] = new NormalCell(count);
                 }
                 mCellMap.put(count,mArrOfCells[i][j]);  // Insert it in to map
-                cellList.add(mArrOfCells[i][j]);
-                //mAllCells.add(cellList);
+                mCellMediator.addSource(mArrOfCells[i][j], new Observer<Cell>() {
+                    @Override
+                    public void onChanged(@Nullable Cell cell) {
+                        mCellMediator.setValue(cell);
+                    }
+                });
                 count++;
             }
         }
-        mAllCells.setValue( cellList);
         mTotalNumOfCells = count;
 
     }
@@ -76,15 +82,12 @@ public class Board {
     final public Cell getCell(int x, int y) {
         return mCellMap.get(Utility.getSquare(x,y));
     }
+
     public void setIsOccupied(int cellNo, boolean isOccupied) {
         Cell cell = mCellMap.get(cellNo);
         cell.setIsOccupied(isOccupied);
-        updateLiveData();
     }
 
-    public void updateLiveData() {
-      //  mAllCells.setValue(cellList);
-    }
 
     public Cell getCell(int cellNo) { return mCellMap.get(cellNo); }
 

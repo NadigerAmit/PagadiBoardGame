@@ -256,6 +256,7 @@ public class UiBoard extends View {
         //Width = 1080 Height = 1080SqSize = 216
         // get the Game and Board and all the details.
         int pieceType = Constants.EMPTY;
+        ArrayList<Integer> pieceTypeList = new ArrayList<>();
         for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 5; y++) {
                 final int xCrd = getXCrd(x);
@@ -274,7 +275,6 @@ public class UiBoard extends View {
                 }
                 if(currentCellType == Constants.CELL_TYPE.RESTING_CELL) {
                     paint = mRestingCellPaint;
-                    pieceType = mCellViewModel.getPieceTypes(square); // TODO; this is wrong.
                 } else if (currentCellType == Constants.CELL_TYPE.DESTINATION_CELL) {
                     paint = mFinalDestinationPaint;
                 } else {
@@ -285,15 +285,14 @@ public class UiBoard extends View {
 
              //   Log.e(TAG,"OnDraw for Board View xCrd= "+xCrd+" yCrd = "+yCrd+" xCrd + mSqSize = " +
              //           " "+xCrd + mSqSize + " yCrd + mSqSize  "+yCrd + mSqSize);
-             //     OnDraw for Board View xCrd= 0 yCrd = 864 xCrd + mSqSize =  0216 yCrd + mSqSize  864216
+             //   OnDraw for Board View xCrd= 0 yCrd = 864 xCrd + mSqSize =  0216 yCrd + mSqSize  864216
 
                 // get the piece from the current cell
-                 pieceType = mCellViewModel.getPieceTypes(square);
-                 if(square == 0) pieceType = 2;
-                if(square == 16) pieceType =  4;
-                 if(pieceType != Constants.EMPTY) {
+
+                 ArrayList<Integer> pieceTypeListList = mCellViewModel.getPieceTypesList(square);
+                 if(pieceTypeListList != null) {
                      Log.e(TAG,"Sq = "+square+ " Piece Type "+pieceType);
-                     drawPiece(canvas, xCrd + mSqSize / 2, yCrd + mSqSize / 2, pieceType);
+                     drawPiece(canvas, xCrd + mSqSize / 2, yCrd + mSqSize / 2,pieceTypeListList);
                  } else {
                    //  Log.e(TAG," Piece is = NULL");
                  }
@@ -372,38 +371,42 @@ public class UiBoard extends View {
     protected void drawExtraSquares(Canvas canvas) {
     }
 
-    protected final void drawPiece(Canvas canvas, int xCrd, int yCrd, int p) {
+    protected final void drawPiece(Canvas canvas, int xCrd, int yCrd,ArrayList<Integer> pieceTypeList) {
         Drawable dr = null;
+        int numOfPiece = pieceTypeList.size();
+        for(Integer p:pieceTypeList) {
+            switch (p) {
+                default:
+                case Constants.EMPTY:
+                    dr = null;        // don't do anything
+                    break;
+                case Constants.WKING:
+                    dr = getContext().getResources().getDrawable(R.drawable.wk);
+                    break;
+                case Constants.WQUEEN:
+                    dr = getContext().getResources().getDrawable(R.drawable.wq);
+                    break;
+                case Constants.BKING:
+                    dr = getContext().getResources().getDrawable(R.drawable.bk);
+                    break;
+                case Constants.BQUEEN:
+                    dr = getContext().getResources().getDrawable(R.drawable.bq);
+                    break;
+                case -1:
 
-        switch (p) {
-            default:
-            case Constants.EMPTY:
-                dr = null;		// don't do anything
-                break;
-            case Constants.WKING:
-                dr = getContext().getResources().getDrawable(R.drawable.wk);
-                break;
-            case Constants.WQUEEN:
-                dr = getContext().getResources().getDrawable(R.drawable.wq);
-                break;
-            case Constants.BKING:
-                dr = getContext().getResources().getDrawable(R.drawable.bk);
-                break;
-            case Constants.BQUEEN:
-                dr = getContext().getResources().getDrawable(R.drawable.bq);
-                break;
-            case -1:
-
-        }
-        if (dr != null) {
-            int xOrigin = xCrd - (mSqSize / 2);
-            int yOrigin = yCrd - (mSqSize / 2);
-            Log.e(TAG,"Drawing piece type = "+p);
-            // Todo , below code needs to be refactored to accomadate piceses dynamically
-            xOrigin -= 25;
-            dr.setBounds(xOrigin, yOrigin, xOrigin + mSqSize/2, yOrigin + mSqSize/2);
-            dr.draw(canvas);
-           // xOrigin += mSqSize/5;
+            }
+            // TODO : Now all piece are overwritten , need logic to drwan them non overlapping based on total number.
+            // TODO : Based on numOfPiece.
+            if (dr != null) {
+                int xOrigin = xCrd - (mSqSize / 2);
+                int yOrigin = yCrd - (mSqSize / 2);
+                Log.e(TAG, "Drawing piece type = " + p);
+                // Todo , below code needs to be refactored to accomadate piceses dynamically
+                xOrigin -= 25;
+                dr.setBounds(xOrigin, yOrigin, xOrigin + mSqSize / 2, yOrigin + mSqSize / 2);
+                dr.draw(canvas);
+                // xOrigin += mSqSize/5;
+            /*
             xOrigin += 50;
            // yOrigin +=mSqSize/6;
             dr.setBounds(xOrigin, yOrigin, xOrigin + mSqSize/2, yOrigin + mSqSize/2);
@@ -418,6 +421,8 @@ public class UiBoard extends View {
           //  yOrigin +=mSqSize/2;
             dr.setBounds(xOrigin, yOrigin, xOrigin + mSqSize/2, yOrigin + mSqSize/2);
             dr.draw(canvas);
+            */
+            }
         }
     }
 
@@ -474,50 +479,8 @@ public class UiBoard extends View {
                 sq = Utility.getSquare(x, y);
             }
         }
-        return transformCoOrdinateSquareToCells(sq);
-    }
-
-// This is function is to convert to below table
-/*****************
-0 -20
-1 -21
-2 -22
-3 -23
-4 -24
-5 -16
-6- 17
-7 -18
-8 -19
-9 -20
-10-10
-11-11
-12-12
-13-13
-14-14
-15-05
-16-06
-17-07
-18-08
-19-9
-20-0
-21-1
-22-2
-23-3
-24-4
-**************/
-    int transformCoOrdinateSquareToCells(int sq) {
-        int factor = 0;
-        if(sq >= 0 && sq <= 4) {
-            factor = 20;
-        } else if(sq>=5 && sq <=9) {
-            factor = 10;
-        } else if(sq>=15 && sq <=19) {
-            factor = -10;
-        } else if(sq >= 20 && sq <= 24) {
-            factor = -20;
-        }
-        sq +=factor;
         return sq;
+       // return Utility.transformCoOrdinateSquareToCells(sq);
     }
 
     final private int myColor(Piece piece) {

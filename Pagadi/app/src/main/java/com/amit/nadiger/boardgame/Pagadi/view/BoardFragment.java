@@ -15,15 +15,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
-import com.amit.nadiger.boardgame.Pagadi.etc.Utility;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.Cell;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Game;
 import com.amit.nadiger.boardgame.Pagadi.model.GameRequest;
 import com.amit.nadiger.boardgame.Pagadi.viewmodel.CellViewModel;
 import com.amit.nadiger.boardgame.Pagadi.viewmodel.PieceViewModel;
-
-import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
@@ -101,13 +98,11 @@ public class BoardFragment extends Fragment {
         mCellViewModel.init(getGameRequest());
         mBoard.setViewModel(mCellViewModel);
 
-        mCellViewModel.getAllCells().observe(this, new Observer<ArrayList<Cell>>() {
+        mCellViewModel.getCellMediator().observe(this, new Observer<LiveData<Cell>>() {
             @Override
-            public void onChanged(@Nullable ArrayList<Cell> cells) {
-                // update the Board and redraw the board
-                //Toast.makeText(MainActivity.this,"OmShreeGaneshayaNamah Onchanged",Toast.LENGTH_SHORT).show();
-
-                reDrawBoard();
+            public void onChanged(@android.support.annotation.Nullable LiveData<Cell> cellLiveData) {
+                Log.e(TAG,"cell No= "+ cellLiveData.getValue().getCellNo());
+                Log.e(TAG,"cellType  = "+ cellLiveData.getValue().getCellType());
 
             }
         });
@@ -118,7 +113,7 @@ public class BoardFragment extends Fragment {
                     public void onChanged(@android.support.annotation.Nullable LiveData<Piece> pieceLiveData) {
                         Log.e(TAG,"Pice changed Home cell = "+ pieceLiveData.getValue().getHomeCell());
                         Log.e(TAG,"Pice changed Type  = "+ pieceLiveData.getValue().getPieceType());
-                        Log.e(TAG,"Pice changed Type  = "+ pieceLiveData.getValue().getPawnId());
+                        Log.e(TAG,"Pice changed Type  = "+ pieceLiveData.getValue().getPieceId());
                         reDrawBoard();
                     }
                 });
@@ -134,7 +129,6 @@ public class BoardFragment extends Fragment {
                     mLastTouchDownXY[0] = event.getX();
                     mLastTouchDownXY[1] = event.getY();
                 }
-
                 // let the touch event pass on to whoever needs it
                 return false;
             }
@@ -150,9 +144,8 @@ public class BoardFragment extends Fragment {
 
                 // use the coordinates for whatever
                 Log.e("TAG", "onLongClick: x = " + x + ", y = " + y);
-
-
                 cellNo  = mBoard.coOrdinateToSquare((int) x,(int) y);
+                mCellViewModel.clicked(cellNo);
                 Log.e(TAG,"Cell no = "+cellNo);
 
             }

@@ -4,8 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -14,20 +15,17 @@ import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Board;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.Cell;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Game;
-import com.amit.nadiger.boardgame.Pagadi.model.CustomMutableLiveData;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.Player;
 import com.amit.nadiger.boardgame.Pagadi.model.GameRequest;
-
-import java.util.ArrayList;
 
 public class CellViewModel extends AndroidViewModel {
     // TODO: Implement the ViewModel
     private static final String TAG = "CellViewModel";
     private Game  mGame;
     private Board mBoard;
-    private LiveData<ArrayList<Cell>> mCells ;
-   //private MutableLiveData< ArrayList<MutableLiveData<Cell>>>  mCells;
+    private LinkedList<Player> mPlayerList = new LinkedList<>();
+    private MediatorLiveData<LiveData<Cell>> mMediatorCellLiveData = new MediatorLiveData<>();
 
-    //private CustomMutableLiveData<Cell> mCells ;
 
 
     CellViewModel(@NonNull Application application) {
@@ -37,37 +35,72 @@ public class CellViewModel extends AndroidViewModel {
     public void init(GameRequest request) {
         mGame =  Game.getInstance(request);
         mBoard = mGame.getBoard();
-        mCells =  mBoard.getAllCells();
+        mMediatorCellLiveData = mBoard.getCellMediator();
+        mPlayerList = mGame.getPlayerList();
     }
 
-    public LiveData<ArrayList<Cell>> getAllCells() { return mCells; }
-   // public MutableLiveData< ArrayList<MutableLiveData<Cell>>> getAllCells() { return mCells; }
 
+    public  MediatorLiveData<LiveData<Cell>> getCellMediator() {
+        return mMediatorCellLiveData;
+    }
 
     /**************************************************************************/
-    // *********************  Wrapper functions ********************************
+    /* *********************  Wrapper functions ********************************/
     /**************************************************************************/
 
     public Constants.CELL_TYPE cellType(int square) {
          return mBoard.getCell(square).getCellType();
     }
 
-    public int getPieceTypes(int square) {
-        if(mBoard.getCell(square).getPiece() == null) {
-            return Constants.EMPTY;
+    public ArrayList<Integer> getPieceTypesList(int square) {
+        ArrayList<Integer> pieceTypeList = new ArrayList<>();
+        if(mBoard.getCell(square).getAllPieceOfCell() == null) {
+            return null;
         }
-        return mBoard.getCell(square).getPiece().getPieceType();
+        ArrayList<Piece> pieceList = mBoard.getCell(square).getAllPieceOfCell();
+
+        for (Piece piece : pieceList) {
+        Integer pieceType = new Integer(piece.getPieceType());
+            pieceTypeList.add(pieceType);
+        }
+        return pieceTypeList;
+    }
+
+
+    private int clickState = 0;
+    int selectdCellNo = -1;
+    // 0 => 1st click piece selection
+    // 1 => 2nd click piece movement
+    public void clicked(int cellNo) {
+        selectdCellNo = cellNo;
+        switch(clickState) {
+            case 0:
+                // select piece according to player' turn in the Perticuler cell
+
+                clickState = 1;
+                break;
+            case 1:
+                clickState = 0;
+                break;
+            default:
+        }
+
+    }
+    public void move() {
+        Log.e(TAG,"Size of player "+mPlayerList.size());
+        mPlayerList.get(1).doMove(22,3);
     }
 
     public ArrayList<Piece> getResidents(int square) {
-        return mBoard.getCell(square).getResidents();
+        return mBoard.getCell(square).getAllPieceOfCell();
     }
 
-    // For testing of Viewmodel purpose
-    public void setOccupied(int cellNo , boolean flag) {
-        //mBoard.setIsOccupied(cellNo,flag);
+    // For testing of View model purpose
 
-        mBoard.getCell(22).getResidents().get(1).moveToPosition(1);
+
+    public void setOccupied(int cellNo , boolean flag) {
+        mBoard.setIsOccupied(cellNo,flag);
+      //  mBoard.getCell(22).getResidents().get(1).moveToPosition(1);
     }
 
     public void DebugPrintGame() {
