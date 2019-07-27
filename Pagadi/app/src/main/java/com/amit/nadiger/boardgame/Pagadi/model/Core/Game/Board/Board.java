@@ -1,11 +1,11 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board;
 
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.annotation.Nullable;
 
 import com.amit.nadiger.boardgame.Pagadi.etc.Utility;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.Cell;

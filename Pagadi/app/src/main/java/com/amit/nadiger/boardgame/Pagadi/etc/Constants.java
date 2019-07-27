@@ -8,6 +8,7 @@ public final class Constants {
     public static final int LEFT_RESTING_CELL   = 10; // Left katti
     public static final int BOTTOM_RESTING_CELL = 22; //Down
     public static final int RIGHT_RESTING_CELL  = 14;
+    public static final int FINAL_DESTIONATION  = 12;
 
     public static final int EMPTY = 0;
     public static final int WKING  = 1;  // WhitePiece
@@ -15,6 +16,7 @@ public final class Constants {
     public static final int BKING  = 3;  // BlackPiece
     public static final int BQUEEN = 4;  // GreenPiece
     public static final int INVALID_PIECE_MOVE = -1;
+    public static final int EXTRA_MOVE_REQUIRED = -101;
 
 
     public enum CELL_TYPE {

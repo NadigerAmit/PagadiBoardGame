@@ -1,9 +1,9 @@
 package com.amit.nadiger.boardgame.Pagadi.viewmodel;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Game;

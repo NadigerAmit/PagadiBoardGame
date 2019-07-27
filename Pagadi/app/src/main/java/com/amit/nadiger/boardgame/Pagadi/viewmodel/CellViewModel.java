@@ -1,19 +1,20 @@
 package com.amit.nadiger.boardgame.Pagadi.viewmodel;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import android.arch.lifecycle.MediatorLiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Board;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.Cell;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece.Piece;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.BoardFSM;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Game;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.Player;
 import com.amit.nadiger.boardgame.Pagadi.model.GameRequest;
@@ -23,6 +24,7 @@ public class CellViewModel extends AndroidViewModel {
     private static final String TAG = "CellViewModel";
     private Game  mGame;
     private Board mBoard;
+    private BoardFSM mFsm = null;
     private LinkedList<Player> mPlayerList = new LinkedList<>();
     private MediatorLiveData<LiveData<Cell>> mMediatorCellLiveData = new MediatorLiveData<>();
 
@@ -37,6 +39,8 @@ public class CellViewModel extends AndroidViewModel {
         mBoard = mGame.getBoard();
         mMediatorCellLiveData = mBoard.getCellMediator();
         mPlayerList = mGame.getPlayerList();
+        mFsm = BoardFSM.getINSTANCE(mBoard);
+        mFsm.setPlayer(mPlayerList.get(0));
     }
 
 
@@ -66,29 +70,16 @@ public class CellViewModel extends AndroidViewModel {
         return pieceTypeList;
     }
 
-
-    private int clickState = 0;
-    int selectdCellNo = -1;
-    // 0 => 1st click piece selection
-    // 1 => 2nd click piece movement
     public void clicked(int cellNo) {
-        selectdCellNo = cellNo;
-        switch(clickState) {
-            case 0:
-                // select piece according to player' turn in the Perticuler cell
+        mFsm.sendEventCellClicked(cellNo);
+    }
 
-                clickState = 1;
-                break;
-            case 1:
-                clickState = 0;
-                break;
-            default:
-        }
-
+    private boolean movePiece(Piece pieceToMove, Integer destCellNo) {
+       return mGame.getCurrentPlayer().doMove(pieceToMove,destCellNo);
     }
     public void move() {
         Log.e(TAG,"Size of player "+mPlayerList.size());
-        mPlayerList.get(1).doMove(22,3);
+      //  mPlayerList.get(1).doMove(22,3);
     }
 
     public ArrayList<Piece> getResidents(int square) {

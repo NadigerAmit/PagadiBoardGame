@@ -1,11 +1,11 @@
 package com.amit.nadiger.boardgame.Pagadi.view;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,7 +100,7 @@ public class BoardFragment extends Fragment {
 
         mCellViewModel.getCellMediator().observe(this, new Observer<LiveData<Cell>>() {
             @Override
-            public void onChanged(@android.support.annotation.Nullable LiveData<Cell> cellLiveData) {
+            public void onChanged(@androidx.annotation.Nullable LiveData<Cell> cellLiveData) {
                 Log.e(TAG,"cell No= "+ cellLiveData.getValue().getCellNo());
                 Log.e(TAG,"cellType  = "+ cellLiveData.getValue().getCellType());
 
@@ -110,7 +110,7 @@ public class BoardFragment extends Fragment {
         mPieceViewModel.init(getGameRequest());
         mPieceViewModel.getMediator().observe(this, new Observer<LiveData<Piece>>() {
                     @Override
-                    public void onChanged(@android.support.annotation.Nullable LiveData<Piece> pieceLiveData) {
+                    public void onChanged(@androidx.annotation.Nullable LiveData<Piece> pieceLiveData) {
                         Log.e(TAG,"Pice changed Home cell = "+ pieceLiveData.getValue().getHomeCell());
                         Log.e(TAG,"Pice changed Type  = "+ pieceLiveData.getValue().getPieceType());
                         Log.e(TAG,"Pice changed Type  = "+ pieceLiveData.getValue().getPieceId());
@@ -147,7 +147,6 @@ public class BoardFragment extends Fragment {
                 cellNo  = mBoard.coOrdinateToSquare((int) x,(int) y);
                 mCellViewModel.clicked(cellNo);
                 Log.e(TAG,"Cell no = "+cellNo);
-
             }
         };
 

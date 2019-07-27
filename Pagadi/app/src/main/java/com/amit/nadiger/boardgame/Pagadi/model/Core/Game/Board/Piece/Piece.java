@@ -1,9 +1,10 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece;
 
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Path.Path;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.Player;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ abstract public class Piece extends MutableLiveData {
     private int mPawnId;
     final private int mHomeCellNo;
     final private Path  mPath;
+    private Player mOwner = null;
 
     private static final String TAG = "Piece";
 
@@ -29,7 +31,20 @@ abstract public class Piece extends MutableLiveData {
 
     abstract public int getPieceType() ;
 
-    public int getHomeCellNo(int homeCellNo) {
+    public void setOwner(Player owner) {
+        if(mOwner == null) {
+            mOwner = owner;
+        } else {
+            Log.e(TAG,"Owner should not be changed");
+        }
+    }
+
+    public Player getOwner() {
+        return mOwner;
+    }
+
+
+    public int getHomeCellNo() {
         return mHomeCellNo;
     }
 
@@ -46,11 +61,13 @@ abstract public class Piece extends MutableLiveData {
         return possiablePositions ; // This is wrong :) ;
     }
 
+    public Integer getSteps(Integer destCellNo) {
+        return mPath.getSteps(mCurrentPosition,destCellNo);
+    }
     public boolean moveToPosition(int steps) {
         Log.e(TAG,"moveToPosition " + steps );
 
-//        mCurrentPosition = mCurrentPosition ; // This is wrong :) ;
-        int nextPosition = mPath.getNextPosition(mCurrentPosition,steps);
+        int nextPosition = mPath.getSteps(mCurrentPosition,steps);
         if(nextPosition == INVALID_PIECE_MOVE) {
             Log.e(TAG,steps+" steps are more than required steps for FD");
             return false;
@@ -62,6 +79,7 @@ abstract public class Piece extends MutableLiveData {
     }
 
     public void notifyUiPieceUpdate() {
+        Log.e(TAG,"notifyUiPieceUpdate called");
         this.setValue(this);
     }
 

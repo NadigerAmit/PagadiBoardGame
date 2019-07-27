@@ -1,9 +1,9 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -19,6 +19,8 @@ import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.RobotPlayer;
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 import com.amit.nadiger.boardgame.Pagadi.model.GameRequest;
 
+import static com.amit.nadiger.boardgame.Pagadi.etc.Constants.EXTRA_MOVE_REQUIRED;
+
 
 public class Game {
     private static final String TAG = "Game";
@@ -29,7 +31,6 @@ public class Game {
     static int gameNum = 0;
     private int mGameId ;
     private static Game mGameInstance = null;
-    final private Player mPlayingOrder[] = new Player[4];
 
     //Queue for maintaining the order .
     Queue<Player> mPlayingOrderQueue = new LinkedList<>();
@@ -73,12 +74,35 @@ public class Game {
         return (LinkedList)mPlayingOrderQueue;
     }
 
+    synchronized private void updatePlayerOderQueue(Piece piece) {
+        if(piece.getOwner() == getCurrentPlayer()) {
+            ArrayList<Integer> moves = getCurrentPlayer().getMoves();
+            if(moves == null || moves.isEmpty()) {
+                Player player = mPlayingOrderQueue.poll();
+                if(!player.win()) {
+                    mPlayingOrderQueue.add(player);
+                }
+                // switch player
+            } else if(moves.size() == 1) {
+                if(moves.get(0) == EXTRA_MOVE_REQUIRED) {
+                    // Show pop-up to user for extra chance.
+                    // Due to killing of other piece , there will be some extra move.
+                }
+            } else {
+                // still many moves are remaining for this player.
+            }
+        } else {
+            // pop up , invalid piece selected.
+        }
+    }
+
     private void addSourceToPieceMediator() {
        // Populate from all 4 Piece lists
         for (LiveData<Piece> piece : mPlayer1Piece) {
             mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
+                    updatePlayerOderQueue(piece);
                     mPieceMediator.setValue(piece);
                 }
             });
@@ -87,6 +111,7 @@ public class Game {
             mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
+                    updatePlayerOderQueue(piece);
                     mPieceMediator.setValue(piece);
                 }
             });
@@ -95,6 +120,7 @@ public class Game {
             mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
+                    updatePlayerOderQueue(piece);
                     mPieceMediator.setValue(piece);
                 }
             });
@@ -103,6 +129,7 @@ public class Game {
             mPieceMediator.addSource(piece, new Observer<Piece>() {
                 @Override
                 public void onChanged(@Nullable Piece piece) {
+                    updatePlayerOderQueue(piece);
                     mPieceMediator.setValue(piece);
                 }
             });
@@ -110,10 +137,6 @@ public class Game {
     }
 
     public MediatorLiveData<LiveData<Piece>> getPieceMediator()  { return mPieceMediator;}
-
-    public Queue<Player> getPlayingOrder() {
-        return mPlayingOrderQueue;
-    }
 
     public Board getBoard() { return mBoard;}
 
@@ -131,7 +154,6 @@ public class Game {
                         req.getPlayer2Age(),
                         (RestingCell)mBoard.getCell(req.getPlayer3HomeCellNum()),
                         mPlayer2Piece,mBoard);
-                System.out.println("SINGLE_PLYER mode is not supported");
                 mPlayingOrderQueue.add(mPlayer1);
                 mPlayingOrderQueue.add(mPlayer2);
                 break;
@@ -211,6 +233,13 @@ public class Game {
         }
         addSourceToPieceMediator();
     }
+
+    public Player getCurrentPlayer() {
+        // Current layer is always at the front of the queue.
+        return mPlayingOrderQueue.peek();
+    }
+
+
 
     private void CreatePiece(int PlayerNum, GameRequest req) {
         int id = 0;

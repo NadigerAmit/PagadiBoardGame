@@ -45,7 +45,17 @@ public class Path4HNo22 extends Path {
         }
     }
 
-    public int getNextPosition(Integer from, Integer steps) {
+    public Integer getSteps(Integer src,Integer dest) {
+        int srcIndex = 0;
+        int destIndex = 0;
+        for(int i = 0;i<mArray.length;i++) {
+            if(mArray[i] == src) srcIndex = i;
+            if(mArray[i] == dest) destIndex = i;
+        }
+        return (destIndex-srcIndex);
+    }
+
+    private Integer getNextPosition(Integer from, Integer steps) {
         if(mCellPathMap == null) {
             Log.e(TAG,"mCellPathMap = null");
         } else {

@@ -15,9 +15,17 @@ public class FinalDestinationCell extends Cell {
         // TODO Auto-generated constructor stub
     }
 
-    public void addToCell(Piece piece) {
+    public Integer addToCell(Piece piece) {
         mRIPWinners.add(piece);
         setValue(this);
+        Integer numOfWinners = 0;
+        for(Piece winer: mRIPWinners) {
+
+            if(winer.getPieceType() == piece.getPieceType()) {
+                numOfWinners++;
+            }
+        }
+        return numOfWinners;
     }
 
     public void retrivePieceFromCell(Piece piece) {

@@ -2,6 +2,7 @@ package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Piece;
 
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Path.Path;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.Player;
 
 public class RedPiece extends Piece {
     static private int id = 0;

@@ -1,7 +1,7 @@
 package com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.databinding.BaseObservable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.databinding.BaseObservable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -39,6 +39,10 @@ abstract public class Cell extends MutableLiveData<Cell> {
 
     public final static boolean darkSquare(int x, int y) {
         return (x & 1) == (y & 1);
+    }
+
+    public void notifyCellChanged() {
+        setValue(this);
     }
 
     public void setIsOccupied(boolean isOccupied) {

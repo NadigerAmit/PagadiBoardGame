@@ -8,6 +8,7 @@ import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Board.Cell.RestingCell;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Path.Path;
 import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Path.PathFactory;
+import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Player.Player;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ public class PieceFactory {
         }
         // Creating the Path for each pawn .
         Path path = PathFactory.getPath(restingCellNo);
+
         if(path == null) {
             Log.e(TAG,"Path is null for CellNo = "+restingCellNo);
             return null;

@@ -1,18 +1,15 @@
 package com.amit.nadiger.boardgame.Pagadi.view;
 
-import android.app.ActionBar;
 import android.content.Context;
 
 import android.content.res.Resources;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
 import android.view.WindowManager;
 
 import com.amit.nadiger.boardgame.Pagadi.R;
 import com.amit.nadiger.boardgame.Pagadi.etc.Constants;
-import com.amit.nadiger.boardgame.Pagadi.model.Core.Game.Game;
 import com.amit.nadiger.boardgame.Pagadi.model.GameRequest;
 
 public class GameActivity extends AppCompatActivity {
